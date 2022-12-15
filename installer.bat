@@ -9,4 +9,6 @@ pause
 exit /b
 )>"BlockTheSpotAuto.bat"
 
-exit
+BlockTheSpotAuto.bat
+
+exit /b
