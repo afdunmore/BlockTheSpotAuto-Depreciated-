@@ -230,7 +230,6 @@ function CallLang($clg) {
 (Invoke-WebRequest -useb $urlLang).Content | Invoke-Expression 
     }
     catch {
-        Write-Host "Error loading $clg language"
     }
 }
 
@@ -349,16 +348,6 @@ if ($au -gt $by ) { $long = $au + 1 } else { $long = $by + 1 }
 $st = ""
 $star = $st.PadLeft($long, '*')
 
-Write-Host $star
-Write-Host ($lang).Author"" -NoNewline
-Write-Host ($lang).Author2 -ForegroundColor DarkYellow
-if (!($line)) { Write-Host $star`n }
-if ($line) {
-    Write-Host ($lang).TranslationBy"" -NoNewline
-    Write-Host ($lang).TranslationBy2 -ForegroundColor DarkYellow
-    Write-Host $star`n
-}
-
 # Sending a statistical web query to cutt.ly
 $ErrorActionPreference = 'SilentlyContinue'
 $cutt_url = "https://cutt.ly/DK8UQub"
@@ -383,19 +372,6 @@ $spotifyUninstall = "$env:TEMP\SpotifyUninstall.exe"
 $start_menu = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Spotify.lnk"
 $upgrade_client = $false
 
-function incorrectValue {
-
-    Write-Host ($lang).Incorrect"" -ForegroundColor Red -NoNewline
-    Write-Host ($lang).Incorrect2"" -NoNewline
-    Start-Sleep -Milliseconds 1000
-    Write-Host "3" -NoNewline 
-    Start-Sleep -Milliseconds 1000
-    Write-Host " 2" -NoNewline
-    Start-Sleep -Milliseconds 1000
-    Write-Host " 1"
-    Start-Sleep -Milliseconds 1000     
-    Clear-Host
-} 
 
 function unlockFolder {
 
@@ -476,11 +452,7 @@ function downloadScripts($param1) {
     }
 
     catch {
-        Write-Host ""
-        Write-Host ($lang).Download $web_name_file -ForegroundColor RED
         $Error[0].Exception
-        Write-Host ""
-        Write-Host ($lang).Download2`n
         Start-Sleep -Milliseconds 5000 
         try { 
 
@@ -502,10 +474,7 @@ function downloadScripts($param1) {
         }
         
         catch {
-            Write-Host ($lang).Download3 -ForegroundColor RED
             $Error[0].Exception
-            Write-Host ""
-            Write-Host ($lang).Download4`n
             ($lang).StopScrpit
             $tempDirectory = $PWD
             Pop-Location
@@ -564,12 +533,10 @@ if ($win11 -or $win10 -or $win8_1 -or $win8) {
 
     # Remove Spotify Windows Store If Any
     if (Get-AppxPackage -Name SpotifyAB.SpotifyMusic) {
-        Write-Host ($lang).MsSpoti`n
         
         if (!($confirm_uninstall_ms_spoti)) {
             do {
                 $ch = Read-Host -Prompt ($lang).MsSpoti2
-                Write-Host ""
                 if (!($ch -eq 'n' -or $ch -eq 'y')) {
                     incorrectValue
                 }
@@ -580,8 +547,6 @@ if ($win11 -or $win10 -or $win8_1 -or $win8) {
         if ($confirm_uninstall_ms_spoti) { $ch = 'y' }
         if ($ch -eq 'y') {      
             $ProgressPreference = 'SilentlyContinue' # Hiding Progress Bars
-            if ($confirm_uninstall_ms_spoti) { Write-Host ($lang).MsSpoti3`n }
-            if (!($confirm_uninstall_ms_spoti)) { Write-Host ($lang).MsSpoti4`n }
             Get-AppxPackage -Name SpotifyAB.SpotifyMusic | Remove-AppxPackage
         }
         if ($ch -eq 'n') {
@@ -602,10 +567,7 @@ if ($testHosts) {
     $hosts = Get-Content -Path $pathHosts
 
     if ($hosts -match '^[^\#|].+scdn.+|^[^\#|].+spotify.+') {
-        Write-Host ($lang).HostInfo
-        Write-Host ($lang).HostBak
         copy-Item $pathHosts $pathHosts_bak
-        Write-Host ($lang).HostDel`n       
 
         try {
             $hosts = $hosts -replace '^[^\#|].+scdn.+|^[^\#|].+spotify.+', ''
@@ -613,7 +575,6 @@ if ($testHosts) {
             $hosts | Where-Object { $_.trim() -ne "" } | Set-Content -Path $pathHosts -Force
         }
         catch {
-            Write-Host ($lang).HostError`n -ForegroundColor Red
         }
     }
 }
@@ -623,7 +584,6 @@ Push-Location -LiteralPath $env:TEMP
 New-Item -Type Directory -Name "SpotX_Temp-$(Get-Date -UFormat '%Y-%m-%d_%H-%M-%S')" | Convert-Path | Set-Location
 
 if ($premium) {
-    Write-Host ($lang).Prem`n
 }
 if (!($premium) -and $bts) {
     downloadScripts -param1 "BTS"
@@ -640,14 +600,9 @@ if ($spotifyInstalled) {
 
     # Old version Spotify
     if ($online -gt $offline) {
-        if ($confirm_spoti_recomended_over -or $confirm_spoti_recomended_unistall) {
-            Write-Host ($lang).OldV`n
-        }
         if (!($confirm_spoti_recomended_over) -and !($confirm_spoti_recomended_unistall)) {
             do {
-                Write-Host (($lang).OldV2 -f $offline, $online)
                 $ch = Read-Host -Prompt ($lang).OldV3
-                Write-Host ""
                 if (!($ch -eq 'n' -or $ch -eq 'y')) {
                     incorrectValue
                 }
@@ -656,7 +611,6 @@ if ($spotifyInstalled) {
         }
         if ($confirm_spoti_recomended_over -or $confirm_spoti_recomended_unistall) { 
             $ch = 'y' 
-            Write-Host ($lang).AutoUpd`n
         }
         if ($ch -eq 'y') { 
             $upgrade_client = $true 
@@ -664,7 +618,6 @@ if ($spotifyInstalled) {
             if (!($confirm_spoti_recomended_over) -and !($confirm_spoti_recomended_unistall)) {
                 do {
                     $ch = Read-Host -Prompt (($lang).DelOrOver -f $offline)
-                    Write-Host ""
                     if (!($ch -eq 'n' -or $ch -eq 'y')) {
                         incorrectValue
                     }
@@ -674,7 +627,6 @@ if ($spotifyInstalled) {
             if ($confirm_spoti_recomended_unistall) { $ch = 'y' }
             if ($confirm_spoti_recomended_over) { $ch = 'n' }
             if ($ch -eq 'y') {
-                Write-Host ($lang).DelOld`n 
                 unlockFolder
                 cmd /c $spotifyExecutable /UNINSTALL /SILENT
                 wait-process -name SpotifyUninstall
@@ -711,18 +663,13 @@ if ($spotifyInstalled) {
             Invoke-WebRequest -UseBasicParsing @Parameters | Out-Null
         }
         catch {
-            Write-Host 'Unable to submit new version of Spotify' 
-            Write-Host "error description: "$Error[0]
         }
 
         if ($confirm_spoti_recomended_over -or $confirm_spoti_recomended_unistall) {
-            Write-Host ($lang).NewV`n
         }
         if (!($confirm_spoti_recomended_over) -and !($confirm_spoti_recomended_unistall)) {
             do {
-                Write-Host (($lang).NewV2 -f $offline, $online)
                 $ch = Read-Host -Prompt (($lang).NewV3 -f $offline)
-                Write-Host ""
                 if (!($ch -eq 'n' -or $ch -eq 'y')) {
                     incorrectValue
                 }
@@ -735,7 +682,6 @@ if ($spotifyInstalled) {
             if (!($confirm_spoti_recomended_over) -and !($confirm_spoti_recomended_unistall)) {
                 do {
                     $ch = Read-Host -Prompt (($lang).Recom -f $online)
-                    Write-Host ""
                     if (!($ch -eq 'n' -or $ch -eq 'y')) {
                         incorrectValue
                     }
@@ -744,7 +690,6 @@ if ($spotifyInstalled) {
             }
             if ($confirm_spoti_recomended_over -or $confirm_spoti_recomended_unistall) { 
                 $ch = 'y' 
-                Write-Host ($lang).AutoUpd`n
             }
             if ($ch -eq 'y') {
                 $upgrade_client = $true
@@ -752,7 +697,6 @@ if ($spotifyInstalled) {
                 if (!($confirm_spoti_recomended_over) -and !($confirm_spoti_recomended_unistall)) {
                     do {
                         $ch = Read-Host -Prompt (($lang).DelOrOver -f $offline)
-                        Write-Host ""
                         if (!($ch -eq 'n' -or $ch -eq 'y')) {
                             incorrectValue
                         }
@@ -762,7 +706,6 @@ if ($spotifyInstalled) {
                 if ($confirm_spoti_recomended_unistall) { $ch = 'y' }
                 if ($confirm_spoti_recomended_over) { $ch = 'n' }
                 if ($ch -eq 'y') {
-                    Write-Host ($lang).DelNew`n
                     unlockFolder
                     cmd /c $spotifyExecutable /UNINSTALL /SILENT
                     wait-process -name SpotifyUninstall
@@ -775,7 +718,6 @@ if ($spotifyInstalled) {
             }
 
             if ($ch -eq 'n') {
-                Write-Host ($lang).StopScrpit
                 $tempDirectory = $PWD
                 Pop-Location
                 Start-Sleep -Milliseconds 200
@@ -788,11 +730,6 @@ if ($spotifyInstalled) {
 }
 # If there is no client or it is outdated, then install
 if (-not $spotifyInstalled -or $upgrade_client) {
-
-    Write-Host ($lang).DownSpoti"" -NoNewline
-    Write-Host  $online -ForegroundColor Green
-    Write-Host ($lang).DownSpoti2`n
-    
     # Delete old version files of Spotify before installing, leave only profile files
     $ErrorActionPreference = 'SilentlyContinue'
     Stop-Process -Name Spotify 
@@ -804,7 +741,6 @@ if (-not $spotifyInstalled -or $upgrade_client) {
 
     # Client download
     downloadScripts -param1 "Desktop"
-    Write-Host ""
 
     Start-Sleep -Milliseconds 200
 
@@ -832,18 +768,15 @@ if ($no_shortcut) {
 $ch = $null
 
 if ($podcasts_off) { 
-    Write-Host ($lang).PodcatsOff`n 
     $ch = 'y'
 }
 if ($podcasts_on) {
-    Write-Host ($lang).PodcastsOn`n
     $ch = 'n'
 }
 if (!($podcasts_off) -and !($podcasts_on)) {
 
     do {
         $ch = Read-Host -Prompt ($lang).PodcatsSelect
-        Write-Host ""
         if (!($ch -eq 'n' -or $ch -eq 'y')) { incorrectValue }
     }
     while ($ch -notmatch '^y$|^n$')
@@ -857,18 +790,15 @@ if ($downgrading) { $upd = "`n" + [string]($lang).DowngradeNote }
 else { $upd = "" }
 
 if ($block_update_on) { 
-    Write-Host ($lang).UpdBlock`n
     $ch = 'y'
 }
 if ($block_update_off) {
-    Write-Host ($lang).UpdUnblock`n
     $ch = 'n'
 }
 if (!($block_update_on) -and !($block_update_off)) {
     do {
         $text_upd = [string]($lang).UpdSelect + $upd
         $ch = Read-Host -Prompt $text_upd
-        Write-Host ""
         if (!($ch -eq 'n' -or $ch -eq 'y')) { incorrectValue } 
     }
     while ($ch -notmatch '^y$|^n$')
@@ -886,11 +816,9 @@ if ($ch -eq 'n') {
 $ch = $null
 
 if ($cache_on) { 
-    Write-Host (($lang).CacheOn -f $number_days)`n 
     $cache_install = $true
 }
 if ($cache_off) { 
-    Write-Host ($lang).CacheOff`n
     $ErrorActionPreference = 'SilentlyContinue'
     $desktop_folder = DesktopFolder
     if (Test-Path -LiteralPath $cache_folder) {
@@ -903,7 +831,6 @@ if (!($cache_on) -and !($cache_off)) {
 
     do {
         $ch = Read-Host -Prompt ($lang).CacheSelect
-        Write-Host ""
         if (!($ch -eq 'n' -or $ch -eq 'y')) { incorrectValue }
     }
     while ($ch -notmatch '^y$|^n$')
@@ -912,9 +839,7 @@ if (!($cache_on) -and !($cache_off)) {
         $cache_install = $true 
 
         do {
-            Write-Host ($lang).CacheDays
             $ch = Read-Host -Prompt ($lang).CacheDays2
-            Write-Host ""
             if (!($ch -match "^[1-9][0-9]?$|^100$")) { incorrectValue }
         }
         while ($ch -notmatch '^[1-9][0-9]?$|^100$')
@@ -931,9 +856,6 @@ if (!($cache_on) -and !($cache_off)) {
         }
     }
 }
-
-if ($exp_standart) { Write-Host ($lang).ExpStandart`n }
-if ($exp_spotify) { Write-Host ($lang).ExpSpotify`n }
 
 $url = "https://raw.githubusercontent.com/SpotX-CLI/SpotX-commons/main/patches.json"
 $webjson = (Invoke-WebRequest -UseBasicParsing -Uri $url).Content | ConvertFrom-Json
@@ -1139,9 +1061,6 @@ function Helper($paramname) {
 
                     $notlog = "MinJs", "MinJson", "Removertl", "RemovertlCssmin"
                     if ($paramname -notin $notlog) {
-    
-                        Write-Host $novariable -ForegroundColor red -NoNewline 
-                        Write-Host "$name$PSItem $numbers"'in'$n
                     }
                 }  
                 $numbers++
@@ -1155,9 +1074,6 @@ function Helper($paramname) {
 
                 if (!($paramname -eq "RuTranslate") -or $err_ru) {
 
-    
-                    Write-Host $novariable -ForegroundColor red -NoNewline 
-                    Write-Host "$name$PSItem"'in'$n
                 }
             }
         }    
@@ -1209,7 +1125,6 @@ function extract ($counts, $method, $name, $helper, $add) {
     }
 }
 
-Write-Host ($lang).ModSpoti`n
 
 
 if (!($premium) -and $bts) {
@@ -1242,15 +1157,11 @@ $spotify_exe_bak_patch = "$env:APPDATA\Spotify\Spotify.bak"
 
 
 if ($test_spa -and $test_js) {
-    Write-Host ($lang).Error -ForegroundColor Red
-    Write-Host ($lang).FileLocBroken
-    Write-Host ($lang).StopScrpit
     pause
     Exit
 }
 
 if (Test-Path $xpui_js_patch) {
-    Write-Host ($lang).Spicetify`n
 
     # Delete all files except "en", "ru" and "__longest"
     if ($ru) {
@@ -1293,7 +1204,6 @@ if (Test-Path $xpui_js_patch) {
 
         }
         else {
-            Write-Host ($lang).NoRestore`n
             Pause
             Exit
         }
@@ -1402,7 +1312,6 @@ If (Test-Path $xpui_spa_patch) {
             }
         }
         else {
-            Write-Host ($lang).NoRestore2`n
             Pause
             Exit
         }
@@ -1586,10 +1495,6 @@ if ($block_update) {
         $exe = "$env:APPDATA\Spotify\Spotify.exe"
         $ANSI = [Text.Encoding]::GetEncoding(1251)
         $old = [IO.File]::ReadAllText($exe, $ANSI)
-
-        if ($old -match "(?<=wg:\/\/desktop-update\/.)7(\/update)") {
-            Write-Host ($lang).UpdateBlocked`n
-        }
         elseif ($old -match "(?<=wg:\/\/desktop-update\/.)2(\/update)") {
             if (Test-Path -LiteralPath $exe_bak) { 
                 Remove-Item $exe_bak -Recurse -Force
@@ -1600,11 +1505,9 @@ if ($block_update) {
             [IO.File]::WriteAllText($exe, $new, $ANSI)
         }
         else {
-            Write-Host ($lang).UpdateError`n -ForegroundColor Red
         }
     }
     else {
-        Write-Host ($lang).NoSpotifyExe`n -ForegroundColor Red 
     }
 }
 
@@ -1670,5 +1573,6 @@ if ($cache_install) {
 if ($start_spoti) { Start-Process -WorkingDirectory $spotifyDirectory -FilePath $spotifyExecutable }
 
 exit
+
 
 
