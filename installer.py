@@ -3,7 +3,6 @@ import os
 import os.path
 
 r = requests.get("https://raw.githubusercontent.com/afdunmore/BlockTheSpotAuto/main/BlockTheSpotAuto.bat")
-#print(r.text)
 username = os.getlogin()
 path = f"C:/Users/{username}/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/BlockTheSpotAuto.bat"
 
